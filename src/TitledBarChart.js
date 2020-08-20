@@ -18,56 +18,46 @@ const months = {
   December: "12",
 };
 
-const years = {
-  "2015": 2015,
-  "2016": 2016,
-  "2017": 2017,
-};
-
-export class ProfitBarChart extends React.Component {
+export class TitledBarChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      from: "2016-01-01",
-      to: "2016-01-31",
-      selectedMonth: "January",
-      selectedYear: "2016",
+      selectedMonth: this.props.defaultDate.month,
+      selectedYear: this.props.defaultDate.year,
     };
   }
-  /*   getMonthFilter() {
-    return {
-      absoluteDateFilter: {
-        dataSet: {
-          uri: dateAttribute,
-        },
-        from: this.state.from,
-        to: this.state.to,
-      },
-    };
-  } */
 
   getMonthFilter = () => {
+    // Compute 'from' and 'to' assuming all months end in 31(?)
+    const from = `${this.state.selectedYear}-${
+      months[this.state.selectedMonth]
+    }-01`;
+    const to = `${this.state.selectedYear}-${
+      months[this.state.selectedMonth]
+    }-31`;
+    // Return the appropriate filter
     if (this.props.filter) {
       if (this.props.filter["absoluteDateFilter"]) {
         return {
           absoluteDateFilter: {
             ...this.props.filter["absoluteDateFilter"],
-            from: this.state.from,
-            to: this.state.to,
+            from,
+            to,
           },
         };
       } else if (this.props.filter["relativeDateFilter"]) {
         return {
           relativeDateFilter: {
             ...this.props.filter["relativeDateFilter"],
-            from: this.state.from,
-            to: this.state.to,
+            from,
+            to,
           },
         };
       } else {
         throw new Error("Not valid argument for absolute/relative Date Filter");
       }
     } else {
+      // Empty object in case no filter should be applied
       return {};
     }
   };
@@ -109,7 +99,7 @@ export class ProfitBarChart extends React.Component {
         value={this.state.selectedYear}
         onChange={this.onDropDownYearChange}
       >
-        {Object.keys(years).map((year) => (
+        {this.props.filter.yearsRange.map((year) => (
           <option value={year} key={year}>
             {year}
           </option>
@@ -133,49 +123,34 @@ export class ProfitBarChart extends React.Component {
     );
   };
 
-  setStateRange = () => {
-    this.setState(
-      {
-        from: `${this.state.selectedYear}-${
-          months[this.state.selectedMonth]
-        }-01`,
-        to: `${this.state.selectedYear}-${months[this.state.selectedMonth]}-31`,
-      },
-      console.log("this.state: ", this.state)
-    );
-  };
-
   onDropDownMonthChange = (event) => {
-    this.setState({ selectedMonth: event.target.value }, this.setStateRange);
+    this.setState({ selectedMonth: event.target.value });
   };
 
   onDropDownYearChange = (event) => {
-    this.setState({ selectedYear: event.target.value }, this.setStateRange);
+    this.setState({ selectedYear: event.target.value });
   };
-
-  renderDropDowns = () => (
-    <div>
-      {this.renderMonthDropdown()}
-      {this.renderYearDropdown()}
-    </div>
-  );
 
   render() {
     const filters = [this.getMonthFilter()];
     const measures = this.getMeasures();
     const viewBy = this.getViewBy();
-    console.log("filters: ", filters);
     return (
       <div
-        className="ProfitBarChart"
+        className="TitledBarChart"
         style={{
           display: "grid",
-          gridTemplateRows: "65px auto",
+          gridTemplateRows: "15% auto",
         }}
       >
         <h1 style={{ gridRowStart: 1, gridRowEnd: 2 }}>
-          {this.props.title ? this.props.title : measures[0].measure.alias} in{" "}
-          {this.props.isMonthlyFiltered ? (
+          {this.props.title
+            ? this.props.title
+            : measures.length
+            ? measures[0].measure.alias
+            : ""}{" "}
+          in{" "}
+          {this.props.filter ? (
             <span>
               <span>{this.renderMonthDropdown()}</span>
               <span>{this.renderYearDropdown()}</span>
@@ -187,7 +162,7 @@ export class ProfitBarChart extends React.Component {
         <div style={{ gridRowStart: 2, gridRowEnd: 3 }}>
           <ColumnChart
             measures={measures}
-            filters={this.props.isMonthlyFiltered ? filters : []}
+            filters={this.props.filter ? filters : []}
             projectId={this.props.projectId}
             viewBy={viewBy}
           />
@@ -197,10 +172,14 @@ export class ProfitBarChart extends React.Component {
   }
 }
 
-ProfitBarChart.defaultProps = {
+TitledBarChart.defaultProps = {
   chartTitle: "",
   measures: [],
   projectId: "",
   viewBy: undefined,
-  isMonthlyFiltered: false,
+  filter: undefined,
+  defaultDate: {
+    month: "January",
+    year: "2016",
+  },
 };

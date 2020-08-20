@@ -3,9 +3,7 @@
 import React, { Component } from "react";
 import "@gooddata/react-components/styles/css/main.css";
 
-import { ColumnChart } from "@gooddata/react-components";
-
-import { ProfitBarChart } from "./GenericBarChart";
+import { TitledBarChart } from "./TitledBarChart";
 
 const grossProfitMeasure = "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/6877";
 const dateAttributeInMonths =
@@ -13,26 +11,12 @@ const dateAttributeInMonths =
 const dateAttribute = "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/2180";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      from: "2016-01-01",
-      to: "2016-01-31",
-      selectedMonth: "January",
-    };
-  }
-
   getMeasures() {
     return [
       {
         localIdentifier: "m1",
         uri: grossProfitMeasure,
         alias: "$ Gross Profit",
-      },
-      {
-        localIdentifier: "m2",
-        uri: grossProfitMeasure,
-        alias: "$ Gross Loss",
       },
     ];
   }
@@ -51,6 +35,7 @@ class App extends Component {
           uri: dateAttribute,
         },
       },
+      yearsRange: [2015, 2016, 2017],
     };
   }
 
@@ -62,13 +47,12 @@ class App extends Component {
 
     return (
       <div className="App">
-        <ProfitBarChart
+        <TitledBarChart
           measures={measures}
           projectId={projectId}
-          isMonthlyFiltered
           filter={filters}
         />
-        <ProfitBarChart
+        <TitledBarChart
           measures={measures}
           viewBy={viewBy}
           projectId={projectId}
