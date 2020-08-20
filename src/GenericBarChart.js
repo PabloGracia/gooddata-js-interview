@@ -3,11 +3,6 @@ import "@gooddata/react-components/styles/css/main.css";
 
 import { ColumnChart } from "@gooddata/react-components";
 
-const grossProfitMeasure = "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/6877";
-const dateAttributeInMonths =
-  "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/2142";
-const dateAttribute = "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/2180";
-
 const months = {
   January: "01",
   February: "02",
@@ -39,7 +34,7 @@ export class ProfitBarChart extends React.Component {
       selectedYear: "2016",
     };
   }
-  getMonthFilter() {
+  /*   getMonthFilter() {
     return {
       absoluteDateFilter: {
         dataSet: {
@@ -49,7 +44,33 @@ export class ProfitBarChart extends React.Component {
         to: this.state.to,
       },
     };
-  }
+  } */
+
+  getMonthFilter = () => {
+    if (this.props.filter) {
+      if (this.props.filter["absoluteDateFilter"]) {
+        return {
+          absoluteDateFilter: {
+            ...this.props.filter["absoluteDateFilter"],
+            from: this.state.from,
+            to: this.state.to,
+          },
+        };
+      } else if (this.props.filter["relativeDateFilter"]) {
+        return {
+          relativeDateFilter: {
+            ...this.props.filter["relativeDateFilter"],
+            from: this.state.from,
+            to: this.state.to,
+          },
+        };
+      } else {
+        throw new Error("Not valid argument for absolute/relative Date Filter");
+      }
+    } else {
+      return {};
+    }
+  };
 
   getMeasures() {
     return this.props.measures.map((data) => ({
@@ -143,6 +164,7 @@ export class ProfitBarChart extends React.Component {
     const filters = [this.getMonthFilter()];
     const measures = this.getMeasures();
     const viewBy = this.getViewBy();
+    console.log("filters: ", filters);
     return (
       <div
         className="ProfitBarChart"

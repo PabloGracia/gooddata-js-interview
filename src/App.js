@@ -44,10 +44,21 @@ class App extends Component {
     };
   }
 
+  getMonthFilter() {
+    return {
+      absoluteDateFilter: {
+        dataSet: {
+          uri: dateAttribute,
+        },
+      },
+    };
+  }
+
   render() {
     const projectId = "xms7ga4tf3g3nzucd8380o2bev8oeknp";
     const measures = this.getMeasures();
     const viewBy = this.getViewBy();
+    const filters = this.getMonthFilter();
 
     return (
       <div className="App">
@@ -55,6 +66,7 @@ class App extends Component {
           measures={measures}
           projectId={projectId}
           isMonthlyFiltered
+          filter={filters}
         />
         <ProfitBarChart
           measures={measures}
