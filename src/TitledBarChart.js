@@ -38,31 +38,35 @@ export class TitledBarChart extends React.Component {
     // Return the appropriate filter
     if (this.props.filter) {
       if (this.props.filter["absoluteDateFilter"]) {
-        return {
-          absoluteDateFilter: {
-            ...this.props.filter["absoluteDateFilter"],
-            from,
-            to,
+        return [
+          {
+            absoluteDateFilter: {
+              ...this.props.filter["absoluteDateFilter"],
+              from,
+              to,
+            },
           },
-        };
+        ];
       } else if (this.props.filter["relativeDateFilter"]) {
-        return {
-          relativeDateFilter: {
-            ...this.props.filter["relativeDateFilter"],
-            from,
-            to,
+        return [
+          {
+            relativeDateFilter: {
+              ...this.props.filter["relativeDateFilter"],
+              from,
+              to,
+            },
           },
-        };
+        ];
       } else {
         throw new Error("Not valid argument for absolute/relative Date Filter");
       }
     } else {
-      // Empty object in case no filter should be applied
-      return {};
+      // Empty array in case no filter should be applied
+      return [];
     }
   };
 
-  getMeasures() {
+  getMeasures = () => {
     return this.props.measures.map((data) => ({
       measure: {
         localIdentifier: data.localIdentifier,
@@ -76,7 +80,7 @@ export class TitledBarChart extends React.Component {
         alias: data.alias,
       },
     }));
-  }
+  };
 
   getViewBy = () => {
     if (this.props.viewBy) {
@@ -132,7 +136,7 @@ export class TitledBarChart extends React.Component {
   };
 
   render() {
-    const filters = [this.getMonthFilter()];
+    const filters = this.getMonthFilter();
     const measures = this.getMeasures();
     const viewBy = this.getViewBy();
     return (
@@ -162,7 +166,7 @@ export class TitledBarChart extends React.Component {
         <div style={{ gridRowStart: 2, gridRowEnd: 3 }}>
           <ColumnChart
             measures={measures}
-            filters={this.props.filter ? filters : []}
+            filters={filters}
             projectId={this.props.projectId}
             viewBy={viewBy}
           />
