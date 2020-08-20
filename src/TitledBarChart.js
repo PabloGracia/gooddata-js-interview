@@ -67,6 +67,7 @@ export class TitledBarChart extends React.Component {
   };
 
   getMeasures = () => {
+    // In case more than one measure is provided, map through it
     return this.props.measures.map((data) => ({
       measure: {
         localIdentifier: data.localIdentifier,

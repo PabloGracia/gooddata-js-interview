@@ -10,9 +10,9 @@ I wanted to keep the functionality/style as close to the original design as poss
 
 I didn't include much documentation (comments) on the code as the task is quite simple and I think it's very readable. I hope it is, but please reach to me if there is anything I can clarify.
 
-## How to run
+## How to run it
 
-The steps to run the app are the same as in the original description. As I've changed the node-sass version, `yarn` (or `yarn install`) should be re-run. Following that, running `yarn start` will start the app, and after identifying yourself the data can be seen.
+The steps to run the app are the same as in the original description. As I've changed the node-sass version, `yarn` (or `yarn install`) needs to be re-run. Following that, running `yarn start` will start the app, and after identifying yourself the data can be seen.
 
 ---
 
