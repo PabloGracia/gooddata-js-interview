@@ -34,35 +34,14 @@ class App extends Component {
         uri: grossProfitMeasure,
         alias: "$ Gross Loss",
       },
-      /* {
-        measure: {
-          localIdentifier: "m1",
-          definition: {
-            measureDefinition: {
-              item: {
-                uri: grossProfitMeasure,
-              },
-            },
-          },
-          alias: "$ Gross Profit",
-        },
-      }, */
     ];
   }
 
   getViewBy() {
     return {
-      uri: dateAttribute,
+      uri: dateAttributeInMonths,
       localIdentifier: "a1",
-    }; /* 
-    return {
-      visualizationAttribute: {
-        displayForm: {
-          uri: dateAttributeInMonths,
-        },
-        localIdentifier: "a1",
-      },
-    }; */
+    };
   }
 
   render() {
@@ -82,22 +61,6 @@ class App extends Component {
           viewBy={viewBy}
           projectId={projectId}
         />
-        {/* <h1>$ Gross Profit in month {this.renderDropdown()} 2016</h1>
-        <div>
-          <ColumnChart
-            measures={measures}
-            filters={filters}
-            projectId={projectId}
-          />
-        </div>
-        <h1>$ Gross Profit - All months</h1>
-        <div>
-          <ColumnChart
-            measures={measures}
-            viewBy={viewBy}
-            projectId={projectId}
-          />
-        </div> */}
       </div>
     );
   }

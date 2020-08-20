@@ -23,6 +23,12 @@ const months = {
   December: "12",
 };
 
+const years = {
+  "2015": 2015,
+  "2016": 2016,
+  "2017": 2017,
+};
+
 export class ProfitBarChart extends React.Component {
   constructor(props) {
     super(props);
@@ -30,6 +36,7 @@ export class ProfitBarChart extends React.Component {
       from: "2016-01-01",
       to: "2016-01-31",
       selectedMonth: "January",
+      selectedYear: "2016",
     };
   }
   getMonthFilter() {
@@ -75,9 +82,27 @@ export class ProfitBarChart extends React.Component {
     }
   };
 
-  renderDropdown = () => {
+  renderYearDropdown = () => {
     return (
-      <select value={this.state.selectedMonth} onChange={this.onDropDownChange}>
+      <select
+        value={this.state.selectedYear}
+        onChange={this.onDropDownYearChange}
+      >
+        {Object.keys(years).map((year) => (
+          <option value={year} key={year}>
+            {year}
+          </option>
+        ))}
+      </select>
+    );
+  };
+
+  renderMonthDropdown = () => {
+    return (
+      <select
+        value={this.state.selectedMonth}
+        onChange={this.onDropDownMonthChange}
+      >
         {Object.keys(months).map((month) => (
           <option value={month} key={month}>
             {month}
@@ -87,33 +112,62 @@ export class ProfitBarChart extends React.Component {
     );
   };
 
-  onDropDownChange = (event) => {
-    const targetMonth = event.target.value;
-    const from = `2016-${months[targetMonth]}-01`;
-    const to = `2016-${months[targetMonth]}-31`;
-    this.setState({ selectedMonth: targetMonth, to: to, from: from }, () =>
-      console.log(this.state)
+  setStateRange = () => {
+    this.setState(
+      {
+        from: `${this.state.selectedYear}-${
+          months[this.state.selectedMonth]
+        }-01`,
+        to: `${this.state.selectedYear}-${months[this.state.selectedMonth]}-31`,
+      },
+      console.log("this.state: ", this.state)
     );
   };
+
+  onDropDownMonthChange = (event) => {
+    this.setState({ selectedMonth: event.target.value }, this.setStateRange);
+  };
+
+  onDropDownYearChange = (event) => {
+    this.setState({ selectedYear: event.target.value }, this.setStateRange);
+  };
+
+  renderDropDowns = () => (
+    <div>
+      {this.renderMonthDropdown()}
+      {this.renderYearDropdown()}
+    </div>
+  );
 
   render() {
     const filters = [this.getMonthFilter()];
     const measures = this.getMeasures();
-    console.log("measures: ", measures);
+    const viewBy = this.getViewBy();
     return (
-      <div className="ProfitBarChart">
-        <h1>
+      <div
+        className="ProfitBarChart"
+        style={{
+          display: "grid",
+          gridTemplateRows: "65px auto",
+        }}
+      >
+        <h1 style={{ gridRowStart: 1, gridRowEnd: 2 }}>
           {this.props.title ? this.props.title : measures[0].measure.alias} in{" "}
-          {this.props.isMonthlyFiltered
-            ? this.renderDropdown()
-            : " - All months"}
+          {this.props.isMonthlyFiltered ? (
+            <span>
+              <span>{this.renderMonthDropdown()}</span>
+              <span>{this.renderYearDropdown()}</span>
+            </span>
+          ) : (
+            " - All months"
+          )}
         </h1>
-        <div style={{ height: "350px" }}>
+        <div style={{ gridRowStart: 2, gridRowEnd: 3 }}>
           <ColumnChart
             measures={measures}
             filters={this.props.isMonthlyFiltered ? filters : []}
             projectId={this.props.projectId}
-            viewBy={this.props.viewBy}
+            viewBy={viewBy}
           />
         </div>
       </div>
@@ -125,6 +179,6 @@ ProfitBarChart.defaultProps = {
   chartTitle: "",
   measures: [],
   projectId: "",
-  viewBy: {},
+  viewBy: undefined,
   isMonthlyFiltered: false,
 };
